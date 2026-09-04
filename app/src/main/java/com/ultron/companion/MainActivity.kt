@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity() {
 @Composable fun CommandScreen(commands: List<String>, state: String, last: CommandResult?, send: (String) -> Unit) {
     Column { Text("Commands", style = MaterialTheme.typography.headlineSmall); Text("Connection: $state"); Spacer(Modifier.height(12.dp))
         if (commands.isEmpty()) Text("No commands are currently granted to this device.")
-        LazyColumn { items(commands) { c -> Card(Modifier.fillMaxWidth().padding(vertical = 4.dp), onClick = { send(c) }) { Text(c, Modifier.padding(16.dp)) } } }
+        LazyColumn { items(commands) { c -> Card(onClick = { send(c) }, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) { Text(c, Modifier.padding(16.dp)) } } }
         last?.let { Spacer(Modifier.height(12.dp)); Text("Result: ${it.command} — ${if (it.ok) "OK" else "FAILED"}"); if (it.detail.isNotBlank()) Text(it.detail) }
     }
 }
