@@ -332,6 +332,26 @@ fun PairScreen(client: UltronClient, onPaired: () -> Unit) {
     }
 }
 
+private fun org.json.JSONObject.toStringMap(): Map<String, Any?> =
+    keys().asSequence().associateWith { key ->
+        when (val v = get(key)) {
+            org.json.JSONObject.NULL -> null
+            is org.json.JSONObject -> v.toStringMap()
+            is org.json.JSONArray -> v.toStringList()
+            else -> v
+        }
+    }
+
+private fun org.json.JSONArray.toStringList(): List<Any?> =
+    (0 until length()).map { i ->
+        when (val v = get(i)) {
+            org.json.JSONObject.NULL -> null
+            is org.json.JSONObject -> v.toStringMap()
+            is org.json.JSONArray -> v.toStringList()
+            else -> v
+        }
+    }
+
 @Composable
 fun CommandScreen(
     commands: List<String>,
@@ -515,29 +535,4 @@ fun SettingsScreen(
 
         HorizontalDivider()
         Text("Location Sharing", style = MaterialTheme.typography.titleMedium)
-        Text(if (locationOn) "ON • GPS updates about every 30s" else "OFF")
-        Button(onClick = {
-            if (locationOn) {
-                context.stopService(Intent(context, LocationService::class.java))
-                locationOn = false
-            } else {
-                locationPermLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    )
-                )
-            }
-        }) { Text(if (locationOn) "Stop Location Sharing" else "Start Location Sharing") }
-
-        if (permissionMessage.isNotBlank()) {
-            Text(permissionMessage, style = MaterialTheme.typography.bodySmall)
-        }
-
-        HorizontalDivider()
-        Text("Connection log", style = MaterialTheme.typography.titleMedium)
-        LazyColumn(Modifier.heightIn(max = 260.dp)) {
-            items(logs) { Text(it, style = MaterialTheme.typography.bodySmall) }
-        }
-    }
-}
+        Text(if (locationOn) "ON •
