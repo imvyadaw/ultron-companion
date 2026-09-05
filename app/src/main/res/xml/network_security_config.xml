@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Why this is broad instead of listing specific IPs:
+  Android's network-security-config <domain> tag only matches an EXACT
+  hostname or IP literal - it does NOT support CIDR ranges
+  (e.g. "192.168.0.0/16" is not valid here, despite looking like it
+  should work). Since the PC's LAN IP (or Tailscale IP) is typed in by
+  the user at pair time and changes across networks, we cannot know it
+  at build time to list it exactly.
+
+  Given that constraint, this allows cleartext for ALL destinations.
+  This is the same real-world exposure as any LAN/VPN-only tool that
+  talks plain HTTP - it is not equivalent to "safe on the open
+  internet". Treat it exactly like the PC server itself: fine over
+  LAN or a Tailscale tunnel, NOT fine if you port-forward the PC's
+  8765/8766 ports directly to the public internet without a VPN, since
+  cleartext credentials would then be visible to anyone on the path.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
