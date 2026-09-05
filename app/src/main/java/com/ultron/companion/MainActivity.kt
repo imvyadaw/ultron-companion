@@ -536,3 +536,28 @@ fun SettingsScreen(
         HorizontalDivider()
         Text("Location Sharing", style = MaterialTheme.typography.titleMedium)
         Text(if (locationOn) "ON • GPS updates about every 30s" else "OFF")
+        Button(onClick = {
+            if (locationOn) {
+                context.stopService(Intent(context, LocationService::class.java))
+                locationOn = false
+            } else {
+                locationPermLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
+        }) { Text(if (locationOn) "Stop Location Sharing" else "Start Location Sharing") }
+
+        if (permissionMessage.isNotBlank()) {
+            Text(permissionMessage, style = MaterialTheme.typography.bodySmall)
+        }
+
+        HorizontalDivider()
+        Text("Logs", style = MaterialTheme.typography.titleMedium)
+        LazyColumn(Modifier.weight(1f, fill = false)) {
+            items(logs) { line -> Text(line, style = MaterialTheme.typography.bodySmall) }
+        }
+    }
+}
