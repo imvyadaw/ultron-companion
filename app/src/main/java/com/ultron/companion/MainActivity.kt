@@ -535,4 +535,4 @@ fun SettingsScreen(
 
         HorizontalDivider()
         Text("Location Sharing", style = MaterialTheme.typography.titleMedium)
-        Text(if (locationOn) "ON •
+        Text(if (locationOn) "ON • GPS updates about every 30s" else "OFF")
